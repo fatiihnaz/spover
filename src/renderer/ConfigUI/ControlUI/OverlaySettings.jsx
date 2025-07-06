@@ -1,0 +1,147 @@
+// src/renderer/ControlUI/OverlaySettings.jsx
+import React from 'react';
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, ArrowUpLeft, ArrowUpRight, ArrowDownLeft, ArrowDownRight, Squircle } from 'lucide-react';
+
+export default function OverlaySettings({ cfg, setCfg }) {
+  // Pozisyon seçenekleri: önce üst, sonra alt satır
+  const posOpts = [
+    'top-left', 'top-center', 'top-right',
+    'center-left', 'center', 'center-right',
+    'bottom-left', 'bottom-center', 'bottom-right',
+  ];
+  const posLabel = id => ({
+    'top-left': <ArrowUpLeft />,
+    'top-center': <ArrowUp />,
+    'top-right': <ArrowUpRight />,
+    'center-left': <ArrowLeft />,
+    'center': <Squircle />,
+    'center-right': <ArrowRight />,
+    'bottom-left': <ArrowDownLeft />,
+    'bottom-center': <ArrowDown />,
+    'bottom-right': <ArrowDownRight />,
+  })[id];
+
+  const marginPct = 0.014;                    // 1.4 %
+  const { width: SW, height: SH } = window.screen;
+
+  const VIS = Math.min(cfg.scale, 1.6);     // Overlay.jsx’teki formül
+  const boxW = Math.max(200, Math.min(260 * VIS, 600));
+  const boxH = boxW / 2;                     // 2:1 oran (gen x yük)
+
+  const anchors = {
+    'top-left': {x: marginPct * SW, y: marginPct * SH,},
+    'top-center': {x: SW / 2 - boxW / 2, y: marginPct * SH,},
+    'top-right': {x: SW - marginPct * SW - boxW, y: marginPct * SH,},
+    'center-left': {x: marginPct * SW, y: SH / 2 - boxH /2},
+    'center': {x: SW / 2 - boxW / 2, y: SH / 2 - boxH /2},
+    'center-right': {x: SW - marginPct * SW - boxW, y: SH / 2 - boxH /2},
+    'bottom-left': {x: marginPct * SW, y: SH - marginPct * SH - boxH,},
+    'bottom-center': {x: SW / 2 - boxW / 2, y: SH - marginPct * SH - boxH,},
+    'bottom-right': {x: SW - marginPct * SW - boxW, y: SH - marginPct * SH - boxH,},
+  };
+
+  const isActive = id => {
+    if (!cfg?.pos) return false;          // <-- NULL guard
+    const a = anchors[id];
+    return Math.abs(cfg.pos.x - a.x) < 1 &&
+      Math.abs(cfg.pos.y - a.y) < 1;
+  };
+
+  return (
+    <>
+      <h2 className="text-lg font-semibold mb-2">Overlay</h2>
+      <div className="rounded-lg overflow-hidden divide-y divide-zinc-700">
+        {/* Pozisyon */}
+        <div className="p-4">
+          <span className="block mb-2 text-white font-medium">Pozisyon</span>
+          <div className="grid grid-cols-3 gap-3 w-fit">
+            {posOpts.map(id => (
+              <button
+                key={id}
+                onClick={() => setCfg({ ...cfg, pos: anchors[id] })}
+                className={`
+                  w-12 h-12 py-2 text-sm  font-medium rounded-md transition-colors flex justify-center items-center
+                  ${isActive(id) ? 'bg-green-600 text-white' : 'bg-zinc-700/50 hover:bg-zinc-600 text-white/60'}`}
+              >
+                {posLabel(id)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Saydamlık */}
+        <div className="p-4">
+          <span className="block mb-2 text-white font-medium">
+            Saydamlık: <span className="font-semibold">{Math.round(cfg.opacity * 100)}%</span>
+          </span>
+          <input
+            type="range"
+            min="0.1"
+            max="1"
+            step="0.05"
+            className="w-full accent-green-600"
+            value={cfg.opacity}
+            onChange={e =>
+              setCfg({ ...cfg, opacity: parseFloat(e.target.value) })
+            }
+          />
+        </div>
+
+        {/* Boyut */}
+        <div className="p-4">
+          <span className="block mb-2 text-white font-medium">
+            Boyut: <span className="font-semibold">{Math.round(cfg.scale * 100)}%</span>
+          </span>
+          <input
+            type="range"
+            min="0.5"
+            max="2"
+            step="0.1"
+            className="w-full accent-green-600"
+            value={cfg.scale}
+            onChange={e =>
+              setCfg({ ...cfg, scale: parseFloat(e.target.value) })
+            }
+          />
+        </div>
+
+        {/* Arka Plan Rengi */}
+        <div className="p-4">
+          <span className="block mb-2 text-white font-medium">Arka Plan Rengi</span>
+          {/* Mod seçimi */}
+          <div className="flex space-x-3 mb-3">
+            {['static', 'reactive'].map(mode => (
+              <button
+                key={mode}
+                onClick={() => setCfg({ ...cfg, bgMode: mode })}
+                className={`
+          px-3 py-1.5 text-sm font-medium rounded-md
+          transition-colors duration-150
+          ${cfg.bgMode === mode
+                    ? 'bg-green-600 text-white'
+                    : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white'}
+        `}
+              >
+                {mode === 'static' ? 'Statik' : 'Reaktif'}
+              </button>
+            ))}
+          </div>
+          {/* Statik modda renk seçici */}
+          {cfg.bgMode === 'static' && (
+            <div className="flex items-center space-x-4">
+              <input
+                type="color"
+                value={cfg.bgColor}
+                onChange={e => setCfg({ ...cfg, bgColor: e.target.value })}
+                className="w-10 h-10 p-0 border-0 rounded-md shadow-inner"
+              />
+              <span className="text-white text-sm select-none">
+                {cfg.bgColor.toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}

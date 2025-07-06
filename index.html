@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval';
+        style-src  'self' 'unsafe-inline';
+        img-src    'self' https://*.spotifycdn.com https://*.scdn.co  data:;
+        font-src   'self';
+        connect-src 'self' https://api.spotify.com ws://localhost:*;" />
+  <title>Spotify Overlay</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      background: transparent
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/renderer/main.jsx"></script>
+</body>
+
+</html>
