@@ -57,7 +57,7 @@ function createOverlay() {
       preload: path.join(appPath, 'src', 'preload', 'index.js'),
     },
   });
-  overlayWin.webContents.openDevTools({mode: 'undocked'});
+
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
 
   if (isDev) {

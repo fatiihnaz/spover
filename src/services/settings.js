@@ -3,8 +3,9 @@ const Store = require('electron-store').default;
 const { ipcMain, BrowserWindow } = require('electron');
 const { overlayWin } = require('../core/windows');
 
+const isMac = process.platform === 'darwin';
+
 const schema = {
-  // Overlay konumu ve boyutu
   pos: {
     type: 'object',
     default: { x: 0, y: 0 }
@@ -12,11 +13,9 @@ const schema = {
   opacity: { type: 'number', default: 0.8 },
   scale: { type: 'number', default: 1 },
 
-  // Background: static mi reactive mi, ve statik renge ait hex
-  bgMode: { type: 'string', default: 'static' },    // 'static' | 'reactive'
+  bgMode: { type: 'string', default: 'static' },
   bgColor: { type: 'string', default: '#000000' },
 
-  // Hangi modüller görünsün
   showCurrent: { type: 'boolean', default: true },
   showBPM: { type: 'boolean', default: false },
   showNext: { type: 'boolean', default: false },
@@ -25,14 +24,29 @@ const schema = {
   shortcuts: {
     type: 'object',
     default: {
-      cycle: 'CommandOrControl+Shift+O',
-      toggle: 'CommandOrControl+O',
-      drag: 'CommandOrControl+D',
-      ctrl: 'CommandOrControl+K',
+      cycle: `${isMac ? 'Command' : 'Control'}+O`,
+      toggle: `${isMac ? 'Command' : 'Control'}+Shift+O`,
+      drag: `${isMac ? 'Command' : 'Control'}+D`,
+      ctrl: `${isMac ? 'Command' : 'Control'}+K`,
     },
   },
 };
+
 const store = new Store({ schema });
+
+const defaultShortcuts = schema.shortcuts.default;
+
+ipcMain.handle('settings:reset-shortcuts', () => {
+  store.set('shortcuts', defaultShortcuts);
+  const newSc = store.get('shortcuts');
+
+  // Açık tüm pencerelere güncel ayarı yolla
+  BrowserWindow.getAllWindows()
+    .filter(w => !w.isDestroyed())
+    .forEach(w => {w.webContents.send('settings:changed', { shortcuts: newSc }); w.webContents.send('shortcuts:changed', newSc);});
+
+  return newSc;
+});
 
 ipcMain.handle('settings:get', () => store.store);
 ipcMain.on('settings:set', (event, data) => {

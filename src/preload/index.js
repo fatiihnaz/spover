@@ -13,10 +13,18 @@ contextBridge.exposeInMainWorld('settings', {
 contextBridge.exposeInMainWorld('shortcuts', {
   get: () => ipcRenderer.invoke('shortcuts:get'),
   set: (map) => ipcRenderer.send('shortcuts:set', map),
+  pause: () => ipcRenderer.invoke('shortcuts:pause'),
+  resume: () => ipcRenderer.invoke('shortcuts:resume'),
+  reset: () => ipcRenderer.invoke('settings:reset-shortcuts'),
   onChange: (cb) => {
     const handler = (_e, d) => cb(d);
     ipcRenderer.on('shortcuts:changed', handler);
     return () => ipcRenderer.removeListener('shortcuts:changed', handler);
+  },
+  onError: (cb) => {
+    const handler = (_e, d) => cb(d);
+    ipcRenderer.on('shortcuts:error', handler);
+    return () => ipcRenderer.removeListener('shortcuts:error', handler);
   },
 });
 

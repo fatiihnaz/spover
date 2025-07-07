@@ -1,8 +1,10 @@
 const { globalShortcut, ipcMain } = require('electron');
 const settings = require('./settings');
 const { overlayWin, mainWin } = require('../core/windows');
+const { standardize, hasConflict } = require('../utils/shortcutGuards');
 
-let registered = {};  // { id: accelerator }
+let registered = {};  // { id: shortcut }
+let paused = false;
 
 const ACTIONS = {
   cycle: () => overlayWin()?.webContents.send('overlay:cycle-mode'),
@@ -13,7 +15,7 @@ const ACTIONS = {
   },
   drag: () => {
     const win = overlayWin();
-    win?.setIgnoreMouseEvents(false);                 // tıklamaları yakala
+    win?.setIgnoreMouseEvents(false);
     win?.webContents.send('overlay:enter-drag');
   },
   ctrl: () => {
@@ -25,19 +27,42 @@ const ACTIONS = {
 
 let dirty = false;
 
+function broadcastError(payload) {
+  [overlayWin(), mainWin()].forEach(w =>
+    w?.webContents.send('shortcuts:error', payload));
+}
+
+function unregisterAll() {
+  globalShortcut.unregisterAll();
+  registered = {};
+}
+
+
 function registerAll(map) {
   // Eski kısayolları temizle
-  Object.values(registered).forEach(acc => globalShortcut.unregister(acc));
-  registered = {};
+  if (paused) return;
+  unregisterAll();
 
-  Object.entries(map).forEach(([id, accel]) => {
-    if (!accel || !ACTIONS[id]) return;   // boş veya bilinmeyen
+  Object.entries(map).forEach(([id, shortcut]) => {
+    if (!shortcut || !ACTIONS[id]) return;   // boş veya bilinmeyen
+
+    const { [id]: _, ...others } = map;          // kendi kaydını hariç tut
+    const reason = hasConflict(shortcut, others);
+
+    if (reason) {
+      broadcastError({ id, shortcut, reason });
+      delete map[id];           // kirli config’ten sil
+      dirty = true;
+      return;
+    }
+
     try {
-      const ok = globalShortcut.register(accel, () => ACTIONS[id]());
-      if (ok) registered[id] = accel;
+      const ok = globalShortcut.register(shortcut, () => ACTIONS[id]());
+      if (ok) registered[id] = shortcut;
       else throw new Error('register() false');
     } catch (err) {
-      console.warn(`[shortcuts] '${accel}' geçersiz, temizleniyor`);
+      console.warn(`[shortcuts] '${shortcut}' geçersiz, temizleniyor`);
+      broadcastError({ id, shortcut, reason: 'electron-fail' });
       delete map[id];
       dirty = true;
     }
@@ -58,6 +83,19 @@ function init() {
     registerAll(merged);
     [overlayWin(), mainWin()].forEach(w =>
       w?.webContents.send('shortcuts:changed', merged));
+  });
+  ipcMain.handle('shortcuts:pause', () => {
+    if (!paused) {
+      paused = true;
+      unregisterAll();
+    }
+  });
+
+  ipcMain.handle('shortcuts:resume', () => {
+    if (paused) {
+      paused = false;
+      registerAll(settings.get().shortcuts);
+    }
   });
 }
 
