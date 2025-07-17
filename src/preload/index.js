@@ -79,6 +79,7 @@ contextBridge.exposeInMainWorld('overlayControl', {
     return () => ipcRenderer.removeListener('overlay:enter-control', h);
   },
   exitDrag: () => ipcRenderer.send('overlay:exit-drag'),
+  enterDrag: () => ipcRenderer.send('overlay:enter-drag'),
   exitCtrl: () => ipcRenderer.send('overlay:exit-control'),
   setControlRegion: (rect) => ipcRenderer.send('overlay:set-control-region', rect),
 });

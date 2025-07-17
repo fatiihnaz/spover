@@ -9,8 +9,8 @@ const isDev = !app.isPackaged;
 function createMainWindow() {
   const appPath = app.getAppPath();
   mainWin = new BrowserWindow({
-    width: 420,
-    height: 340,
+    width: 1040,
+    height: 540,
     frame: false,
     show: false,
     webPreferences: {
@@ -58,6 +58,7 @@ function createOverlay() {
     },
   });
 
+  // overlayWin.webContents.openDevTools({ mode: 'undocked' });
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
 
   if (isDev) {
@@ -97,12 +98,19 @@ ipcMain.handle('window:hideMain', () => {
   overlayWin.setFocusable(false); 
   overlayWin.showInactive();
 });
-ipcMain.on('overlay:exit-drag', () => overlayWin?.setIgnoreMouseEvents(true, { forward: true }));
-ipcMain.on('overlay:exit-control', () => overlayWin?.setIgnoreMouseEvents(true, { forward: true }));
+ipcMain.on('overlay:exit-drag', () => {
+  overlayWin?.setIgnoreMouseEvents(true, { forward: true });
+});
+ipcMain.on('overlay:enter-drag', () => {
+  overlayWin?.setIgnoreMouseEvents(false);
+});
+ipcMain.on('overlay:exit-control', () => {
+  overlayWin?.setIgnoreMouseEvents(true, { forward: true });
+});
 ipcMain.on('overlay:set-control-region', (_e, rect) => {
   // rect = { x, y, width, height }
-  // forward: true geri kalan tıklamaları underlying pencereye iletir
-  overlayWin.setIgnoreMouseEvents(true, { forward: true, region: [rect] });
+  // Bu region'da mouse event'leri kabul et, geri kalanında ignore et
+  overlayWin.setIgnoreMouseEvents(false);
 });
 
 

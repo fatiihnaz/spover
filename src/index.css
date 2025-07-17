@@ -6,3 +6,12 @@ html, body, #root {
   overflow: hidden;
 }
 .scrollbar-hide::-webkit-scrollbar { display:none; }
+
+/* Drag region for window */
+.window-drag {
+  -webkit-app-region: drag;
+}
+
+.window-no-drag {
+  -webkit-app-region: no-drag;
+}

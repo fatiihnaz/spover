@@ -92,8 +92,8 @@ function IconBtn({ icon: Icon, label, onClick, accent = false, size = 32, iconSi
       title={label}
       onClick={onClick}
       style={{ width: size, height: size }}
-      className={`grid place-items-center rounded-full transition
-                  hover:bg-white/10 ${accent ? "bg-emerald-500 text-white shadow-md" : "text-white/80"}`}>
+      className={`grid place-items-center rounded-md transition
+                  hover:bg-white/10 ${accent ? "text-emerald-500 shadow-md" : "text-white/80"}`}>
       <Icon style={{ width: iconSize, height: iconSize }} />
     </button>
   );

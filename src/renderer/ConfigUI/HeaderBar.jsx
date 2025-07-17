@@ -54,9 +54,9 @@ export default function HeaderBar({ spotifyReady }) {
   );
 
   return (
-    <header className="flex items-center justify-between bg-zinc-900/85 border-b border-zinc-700 px-3 py-1.5 select-none">
+    <header className="flex items-center justify-between bg-zinc-900/85 border-b border-zinc-700 px-3 py-1.5 select-none window-drag">
       {/* Sol taraf: Ayarlar + Spotify durumu */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 window-no-drag">
         <StatusDot />
         <span className="text-xs font-medium whitespace-nowrap">
           {statusText}
@@ -73,7 +73,7 @@ export default function HeaderBar({ spotifyReady }) {
       </div>
 
       {/* Pencere kontrolleri */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 window-no-drag">
         <button
           onClick={() => window.openSettings?.()}
           className="p-1 rounded-sm hover:bg-white/10 transition"
