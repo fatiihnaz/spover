@@ -98,21 +98,11 @@ ipcMain.handle('window:hideMain', () => {
   overlayWin.setFocusable(false); 
   overlayWin.showInactive();
 });
-ipcMain.on('overlay:exit-drag', () => {
-  overlayWin?.setIgnoreMouseEvents(true, { forward: true });
-});
-ipcMain.on('overlay:enter-drag', () => {
-  overlayWin?.setIgnoreMouseEvents(false);
-});
 ipcMain.on('overlay:exit-control', () => {
   overlayWin?.setIgnoreMouseEvents(true, { forward: true });
 });
-ipcMain.on('overlay:set-control-region', (_e, rect) => {
-  // rect = { x, y, width, height }
-  // Bu region'da mouse event'leri kabul et, geri kalanında ignore et
-  overlayWin.setIgnoreMouseEvents(false);
+ipcMain.on('overlay:set-mouse-ignore', (_e, ignore) => {
+  overlayWin?.setIgnoreMouseEvents(ignore, { forward: true });
 });
-
-
 
 module.exports = { mainWin: () => mainWin, overlayWin: () => overlayWin };

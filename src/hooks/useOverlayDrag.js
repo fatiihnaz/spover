@@ -42,7 +42,6 @@ export default function useDragOverlay(cfgPos, updatePos) {
     const unsub = window.overlayControl.onEnterDrag(() => {
       clearTimeout(timerRef.current);
       setDragMode(true);
-      window.overlayControl.enterDrag?.(); // Main process'e bildir
     });
     return () => unsub?.();
   }, []);
@@ -96,7 +95,6 @@ export default function useDragOverlay(cfgPos, updatePos) {
       setPos(finalPos);                      // local state
       updatePos(finalPos);                   // parent'a bildir
 
-      window.overlayControl.exitDrag?.();
       setDragMode(false);
     }
 

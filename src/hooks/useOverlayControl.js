@@ -45,15 +45,7 @@ export default function useOverlayControl(rootRef) {
         if (next) {
           // kontrol modu açılırken:
           armCtrlTimeout();
-          if (rootRef.current) {
-            const { left, top, width, height } = rootRef.current.getBoundingClientRect();
-            window.overlayControl.setControlRegion({
-              x: Math.round(left),
-              y: Math.round(top),
-              width: Math.round(width),
-              height: Math.round(height),
-            });
-          }
+          // Mouse tracking hook artık mouse eventlerini yönetiyor
         } else {
           // kontrol modu kapanırken varsayılan tüm ekrana dön
           window.overlayControl.exitCtrl?.();

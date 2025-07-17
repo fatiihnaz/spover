@@ -15,12 +15,10 @@ const ACTIONS = {
   },
   drag: () => {
     const win = overlayWin();
-    win?.setIgnoreMouseEvents(false);
     win?.webContents.send('overlay:enter-drag');
   },
   ctrl: () => {
     const win = overlayWin();
-    overlayWin().setIgnoreMouseEvents(false);
     win?.webContents.send('overlay:enter-control');
   },
 };

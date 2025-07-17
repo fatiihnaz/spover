@@ -7,6 +7,7 @@ import useSpotifyOverlayData from '../hooks/useOverlaySpotifyData';
 import useVibrantColor from '../hooks/useOverlayReactiveColor';
 import useOverlayModes from '../hooks/useOverlayModes';
 import useOverlayControl from '../hooks/useOverlayControl';
+import useOverlayMouseTracking from '../hooks/useOverlayMouseTracking';
 
 import OverlayCurrent from './SimpleOverlayUI/OverlayCurrent';
 import OverlayBPM from './SimpleOverlayUI/OverlayBPM';
@@ -33,6 +34,9 @@ export default function Overlay() {
 
   /* control mode */
   const { ctrlMode, armCtrlTimeout } = useOverlayControl(rootRef);
+
+  /* mouse tracking for control mode and drag mode */
+  useOverlayMouseTracking(ctrlMode, dragMode, rootRef);
 
   /* modlar */
   const VIS = Math.min(cfg.scale, 1.6);
