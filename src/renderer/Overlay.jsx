@@ -30,7 +30,6 @@ export default function Overlay() {
 
   /* renk */
   const cover = now?.item?.album?.images?.[1] ?? now?.item?.album?.images?.[0];
-  const dominantColor = useReactiveColor(cover?.url, cfg.colorMode, cfg.bgColor);
 
   /* control mode */
   const { ctrlMode, armCtrlTimeout } = useOverlayControl(rootRef);
@@ -70,9 +69,34 @@ export default function Overlay() {
   ];
   const { Active, props } = useOverlayModes(modes);
 
+  /* Aktif moda göre background için kullanılacak cover'ı belirle */
+  const getActiveModeCover = () => {
+    const enabledModes = modes.filter(m => m.enabled);
+    const currentModeIndex = enabledModes.findIndex(m => m.Comp === Active);
+    const currentMode = enabledModes[currentModeIndex];
+    
+    if (!currentMode) return cover; // fallback
+    
+    switch (currentMode.id) {
+      case 'showCurrent':
+        return cover; // current track albüm kapağı
+      case 'showBPM':
+        return cover; // BPM modunda da current track'i kullan
+      case 'showNext':
+        return nextProps.coverNext || cover; // next track varsa onun kapağını, yoksa current
+      case 'showPlaylist':
+        return plProps.playlistCover || cover; // playlist varsa onun kapağını, yoksa current
+      default:
+        return cover;
+    }
+  };
+
+  const activeModeCover = getActiveModeCover();
+  const dominantColor = useReactiveColor(activeModeCover?.url, cfg.colorMode, cfg.bgColor);
+
   /* render */
   return (
-    <div
+    <motion.div
       ref={rootRef}
       className="fixed px-3 py-2 rounded-xl
                  backdrop-blur-sm select-none overflow-hidden"
@@ -82,17 +106,25 @@ export default function Overlay() {
         width: Math.max(200, Math.min(260 * VIS, 600)),
         opacity: cfg.opacity,
         pointerEvents: dragMode || ctrlMode ? 'auto' : 'none',
-        background: cfg.colorMode === 'static'
-          ? cfg.staticType === 'gradient' 
-            ? `linear-gradient(135deg, ${cfg.bgColor} 0%, rgba(0,0,0,0.85) 100%)`
-            : cfg.bgColor
-          : `linear-gradient(135deg, ${dominantColor} 0%, rgba(0,0,0,0.85) 100%)`,
         contain: 'layout style paint',
         isolation: 'isolate',
         boxShadow: `
           0 8px 28px rgba(0,0,0,0.55),
           inset 0 0 0 1px rgba(255,255,255,0.1)
         `,
+      }}
+      animate={{
+        background: cfg.colorMode === 'static'
+          ? cfg.staticType === 'gradient' 
+            ? `linear-gradient(135deg, ${cfg.bgColor} 0%, rgba(0,0,0,0.85) 100%)`
+            : cfg.bgColor
+          : `linear-gradient(135deg, ${dominantColor} 0%, rgba(0,0,0,0.85) 100%)`,
+      }}
+      transition={{
+        background: {
+          duration: 0.8,
+          ease: [0.4, 0, 0.2, 1]
+        }
       }}
       onPointerDown={() => ctrlMode && armCtrlTimeout()}
       onPointerMove={() => ctrlMode && armCtrlTimeout()}
@@ -155,6 +187,6 @@ export default function Overlay() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
