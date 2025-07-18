@@ -83,7 +83,9 @@ export default function Overlay() {
         opacity: cfg.opacity,
         pointerEvents: dragMode || ctrlMode ? 'auto' : 'none',
         background: cfg.colorMode === 'static'
-          ? cfg.bgColor
+          ? cfg.staticType === 'gradient' 
+            ? `linear-gradient(135deg, ${cfg.bgColor} 0%, rgba(0,0,0,0.85) 100%)`
+            : cfg.bgColor
           : `linear-gradient(135deg, ${dominantColor} 0%, rgba(0,0,0,0.85) 100%)`,
         contain: 'layout style paint',
         isolation: 'isolate',
@@ -122,22 +124,30 @@ export default function Overlay() {
             VIS={VIS}
             volume={volume ?? 0}
             isPlaying={!paused}
-            onAction={(action, payload) => {
+            onAction={async (action, payload) => {
               armCtrlTimeout();
               const s = window.spotify;
+              
+              // Optimistik güncellemeler
               switch (action) {
                 case 'prev':
-                  s?.prev?.();
+                  await s?.prev?.();
+                  // Hemen yeni track verilerini çek
+                  window.spotify?.requestImmediateUpdate?.();
                   break;
                 case 'play':
-                  s?.togglePlay?.();
+                  await s?.togglePlay?.();
+                  // Play state'i hemen güncelle (optimistic)
+                  // window.spotify?.requestImmediateUpdate?.();
                   break;
                 case 'next':
-                  s?.next?.();
+                  await s?.next?.();
+                  // Hemen yeni track verilerini çek
+                  window.spotify?.requestImmediateUpdate?.();
                   break;
                 case 'vol':
-                  setVolume(payload);
-                  s?.setVolume?.(payload);
+                  setVolume(payload); // Hemen UI'da göster
+                  await s?.setVolume?.(payload);
                   break;
                 default:
               }

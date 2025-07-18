@@ -1,5 +1,6 @@
 // src/renderer/ControlUI/ModeSettings.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { TriangleAlert } from 'lucide-react';
 import { motion, LayoutGroup } from 'framer-motion';
 
 const simpleOpts = [
@@ -11,11 +12,26 @@ const simpleOpts = [
 
 export default function ModeSettings({ cfg, setCfg }) {
   const [tab, setTab] = useState('simple');
+  const [showModularWarning, setShowModularWarning] = useState(false);
+  
   const tabs = [
     { id: 'simple',  label: 'Simple' },
     { id: 'modular', label: 'Modular' },
   ];
   const opts = tab === 'simple' ? simpleOpts : [];
+
+  const handleTabChange = (tabId) => {
+    if (tabId === 'modular') {
+      setTab('modular'); // Önce modular tab'a geç
+      setShowModularWarning(true);
+      setTimeout(() => {
+        setTab('simple');
+        setShowModularWarning(false);
+      }, 1000);
+    } else {
+      setTab(tabId);
+    }
+  };
 
   return (
     <div className="px-4 py-2">
@@ -29,7 +45,7 @@ export default function ModeSettings({ cfg, setCfg }) {
             return (
               <div key={t.id} className="relative">
                 <button
-                  onClick={() => setTab(t.id)}
+                  onClick={() => handleTabChange(t.id)}
                   className={`pb-2 text-sm font-semibold tracking-wide uppercase transition-colors ${
                     isActive
                       ? 'text-green-400'
@@ -50,6 +66,18 @@ export default function ModeSettings({ cfg, setCfg }) {
           })}
         </nav>
       </LayoutGroup>
+
+      {/* Modular Warning */}
+      {showModularWarning && (
+        <div className="bg-zinc-600/30 border border-zinc-600/50 rounded-lg py-2 px-4">
+          <div className="flex items-center space-x-2">
+            <TriangleAlert size={12} className='text-zinc-400' />
+            <span className="text-zinc-400 text-sm">
+              Bu fonksiyon henüz kullanıma hazır değil.
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Options */}
       <div className="divide-y divide-zinc-700">

@@ -26,6 +26,7 @@ const defaults = {
   scale:       1,
   bgColor:     '#121212',
   colorMode:   'static', // 'static', 'light-muted', 'muted', 'dark-muted'
+  staticType:  'solid',  // 'solid', 'gradient' - statik modda düz renk mi gradyan mı
   showCurrent: true,
   showBPM:     false,
   showNext:    true,

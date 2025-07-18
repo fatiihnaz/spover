@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { SkipBack, Play, Pause, SkipForward, Volume2 } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const clamp = (min, val, max) => Math.min(Math.max(val, min), max);
 
 export default function OverlayController({ onAction, isPlaying, volume = 75, VIS = 1 }) {
+  const [activeBtn, setActiveBtn] = useState(null); // hangi buton aktif
+  
   /* sizes scaled with VIS */
   const BTN = clamp(20, 32 * VIS, 48);
   const ICON = clamp(12, 16 * VIS, 24);
@@ -12,7 +14,13 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
   const THUMB = clamp(3, 4 * VIS, 6); // Minimal thumb boyutu
   const GAP_Y = 6 * VIS;
 
-  const click = useCallback(type => () => onAction(type), [onAction]);
+  const click = useCallback(type => async () => {
+    setActiveBtn(type); // Butonu aktif göster
+    await onAction(type);
+    // Kısa bir süre sonra aktif durumu kaldır
+    setTimeout(() => setActiveBtn(null), 200);
+  }, [onAction]);
+  
   const changeV = useCallback(e => onAction("vol", +e.target.value), [onAction]);
 
   /* Variants ------------------------------------------------------------ */
@@ -64,9 +72,31 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
         className="flex items-center gap-1 pt-1"
         variants={barVariant}
       >
-        <IconBtn size={BTN} icon={SkipBack} iconSize={ICON} label="Önceki" onClick={click("prev")} />
-        <IconBtn size={BTN} icon={isPlaying ? Pause : Play} iconSize={ICON} accent={isPlaying} label={isPlaying ? "Duraklat" : "Oynat"} onClick={click("play")} />
-        <IconBtn size={BTN} icon={SkipForward} iconSize={ICON} label="Sonraki" onClick={click("next")} />
+        <IconBtn 
+          size={BTN} 
+          icon={SkipBack} 
+          iconSize={ICON} 
+          label="Önceki" 
+          onClick={click("prev")}
+          active={activeBtn === "prev"}
+        />
+        <IconBtn 
+          size={BTN} 
+          icon={isPlaying ? Pause : Play} 
+          iconSize={ICON} 
+          accent={isPlaying} 
+          label={isPlaying ? "Duraklat" : "Oynat"} 
+          onClick={click("play")}
+          active={activeBtn === "play"}
+        />
+        <IconBtn 
+          size={BTN} 
+          icon={SkipForward} 
+          iconSize={ICON} 
+          label="Sonraki" 
+          onClick={click("next")}
+          active={activeBtn === "next"}
+        />
 
         <div className="flex items-center gap-1 pl-1">
           <Volume2 style={{ width: ICON, height: ICON }} className="text-white/80" />
@@ -86,15 +116,21 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
 }
 
 /* --------------------------------------------------------------------- */
-function IconBtn({ icon: Icon, label, onClick, accent = false, size = 32, iconSize = 16 }) {
+function IconBtn({ icon: Icon, label, onClick, accent = false, active = false, size = 32, iconSize = 16 }) {
   return (
-    <button
+    <motion.button
       title={label}
       onClick={onClick}
       style={{ width: size, height: size }}
-      className={`grid place-items-center rounded-md transition
+      whileTap={{ scale: 0.95 }}
+      animate={{ 
+        scale: active ? 0.95 : 1,
+        backgroundColor: active ? 'rgba(255,255,255,0.15)' : 'transparent'
+      }}
+      transition={{ duration: 0.1 }}
+      className={`grid place-items-center rounded-md transition-colors
                   hover:bg-white/10 ${accent ? "text-emerald-500 shadow-md" : "text-white/80"}`}>
       <Icon style={{ width: iconSize, height: iconSize }} />
-    </button>
+    </motion.button>
   );
 }

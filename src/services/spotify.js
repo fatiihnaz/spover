@@ -77,6 +77,27 @@ async function getPlaylist(id) {
 let connected = false;
 const emitter = new EventEmitter();
 
+// Hızlı güncelleme için immediate update fonksiyonu
+let immediateUpdateRequested = false;
+
+async function requestImmediateUpdate() {
+  if (!connected || !client) return;
+  
+  immediateUpdateRequested = true;
+  
+  try {
+    await ensureToken();
+    const now = await client.getMyCurrentPlaybackState();
+    overlayWin()?.webContents.send('spotify:now', now.body);
+    mainWin()?.webContents.send('spotify:now', now.body);
+    emitter.emit('spotify:now', now.body);
+  } catch (err) {
+    console.error('Immediate update error', err);
+  }
+  
+  immediateUpdateRequested = false;
+}
+
 async function setup(tokens = credentials.get()) {
   connected = false;
 
@@ -100,6 +121,9 @@ async function setup(tokens = credentials.get()) {
 
   if (poller) clearInterval(poller);
   poller = setInterval(async () => {
+    // Eğer immediate update yapılmışsa bu cycle'ı atla
+    if (immediateUpdateRequested) return;
+    
     try {
       if (Date.now() > tokens.expiresAt) {
         try {
@@ -136,7 +160,7 @@ async function setup(tokens = credentials.get()) {
     } catch (err) {
       console.error('Spotify poll error', err);
     }
-  }, 2000);
+  }, 1500); // 2000ms'den 1500ms'ye düşürdük
 
   connected = true;
   mainWin()?.webContents.send('spotify:connected');
@@ -150,23 +174,36 @@ async function setup(tokens = credentials.get()) {
 
   register('spotify:prev', async () => {
     await ensureToken();
-    return client.skipToPrevious();
+    const result = await client.skipToPrevious();
+    // Biraz bekleyip veriyi güncelleyelim
+    setTimeout(() => requestImmediateUpdate(), 150);
+    return result;
   });
 
   register('spotify:next', async () => {
     await ensureToken();
-    return client.skipToNext();
+    const result = await client.skipToNext();
+    // Biraz bekleyip veriyi güncelleyelim
+    setTimeout(() => requestImmediateUpdate(), 150);
+    return result;
   });
 
   register('spotify:togglePlay', async () => {
     await ensureToken();
     const { body } = await client.getMyCurrentPlaybackState();
-    return body?.is_playing ? client.pause() : client.play();
+    const result = body?.is_playing ? await client.pause() : await client.play();
+    // Play state değişikliğini hemen güncelleyelim
+    setTimeout(() => requestImmediateUpdate(), 100);
+    return result;
   });
 
   register('spotify:setVolume', async (_e, vol) => {
     await ensureToken();
     return client.setVolume(Math.max(0, Math.min(vol, 100)));
+  });
+
+  register('spotify:requestImmediateUpdate', async () => {
+    return requestImmediateUpdate();
   });
 
   register('spotify:audioFeatures', (_e, id) => getAudioFeatures(id));
@@ -182,6 +219,7 @@ module.exports = {
   onConnected: cb => emitter.on('spotify:connected', cb),
   onDisconnected: cb => emitter.on('spotify:disconnected', cb),
   onNow: cb => emitter.on('spotify:now', cb),
+  requestImmediateUpdate,
 
   /* yeni public API */
   getAudioFeatures,

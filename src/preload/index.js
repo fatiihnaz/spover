@@ -48,6 +48,7 @@ contextBridge.exposeInMainWorld('spotify', {
   isConnected: () => ipcRenderer.invoke('spotify:status'),
   onDisconnected: cb => ipcRenderer.on('spotify:disconnected', (_e) => cb()),
   onConnected: (cb) => ipcRenderer.on('spotify:connected', cb),
+  requestImmediateUpdate: () => ipcRenderer.invoke('spotify:requestImmediateUpdate'),
   getAudioFeatures: id => ipcRenderer.invoke('spotify:audioFeatures', id),
   getArtist: id => ipcRenderer.invoke('spotify:artist', id),
   getQueue: () => ipcRenderer.invoke('spotify:queue'),

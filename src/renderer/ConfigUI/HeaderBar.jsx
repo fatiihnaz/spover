@@ -76,10 +76,10 @@ export default function HeaderBar({ spotifyReady }) {
       <div className="flex items-center gap-1 window-no-drag">
         <button
           onClick={() => window.openSettings?.()}
-          className="p-1 rounded-sm hover:bg-white/10 transition"
+          className="p-1 rounded-sm transition"
           title="Ayarlar"
         >
-          <Settings size={14} strokeWidth={1.25} className="text-zinc-300" />
+          <Settings size={14} strokeWidth={1.25} className="text-zinc-300/30" />
         </button>
         <button
           onClick={() => ctrl('minimize')}
