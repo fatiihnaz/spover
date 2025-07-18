@@ -9,7 +9,7 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
   const BTN = clamp(20, 32 * VIS, 48);
   const ICON = clamp(12, 16 * VIS, 24);
   const SLIDER_W = clamp(72, 100 * VIS, 160);
-  const THUMB = clamp(8, 12 * VIS, 20);
+  const THUMB = clamp(3, 4 * VIS, 6); // Minimal thumb boyutu
   const GAP_Y = 6 * VIS;
 
   const click = useCallback(type => () => onAction(type), [onAction]);
@@ -76,8 +76,8 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
             max={100}
             value={volume ?? 0}
             onChange={changeV}
-            style={{ width: SLIDER_W, '--thumb-size': THUMB }}
-            className={`h-1 accent-emerald-500 cursor-pointer ${volume === null ? 'opacity-40 pointer-events-none' : ''}`}
+            style={{ width: SLIDER_W, '--thumb-size': `${THUMB}px` }}
+            className={`volume-slider h-1 accent-emerald-500 cursor-pointer ${volume === null ? 'opacity-40 pointer-events-none' : ''}`}
           />
         </div>
       </motion.div>

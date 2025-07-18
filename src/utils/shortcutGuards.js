@@ -99,6 +99,7 @@ const RESERVED = [
   'ctrl+s',
   'ctrl+c',
   'ctrl+v',
+  'ctrl+z',
 ].map(standardize);
 
 /**

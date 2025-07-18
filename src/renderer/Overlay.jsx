@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import useConfig from '../hooks/useConfig';
 import useDragOverlay from '../hooks/useOverlayDrag';
 import useSpotifyOverlayData from '../hooks/useOverlaySpotifyData';
-import useVibrantColor from '../hooks/useOverlayReactiveColor';
+import useReactiveColor from '../hooks/useOverlayReactiveColor';
 import useOverlayModes from '../hooks/useOverlayModes';
 import useOverlayControl from '../hooks/useOverlayControl';
 import useOverlayMouseTracking from '../hooks/useOverlayMouseTracking';
@@ -30,7 +30,7 @@ export default function Overlay() {
 
   /* renk */
   const cover = now?.item?.album?.images?.[1] ?? now?.item?.album?.images?.[0];
-  const dominantColor = useVibrantColor(cover?.url);
+  const dominantColor = useReactiveColor(cover?.url, cfg.colorMode, cfg.bgColor);
 
   /* control mode */
   const { ctrlMode, armCtrlTimeout } = useOverlayControl(rootRef);
@@ -74,18 +74,23 @@ export default function Overlay() {
   return (
     <div
       ref={rootRef}
-      className="fixed px-3 py-2 border border-white/10 rounded-xl
-                 backdrop-blur-sm shadow-[0_8px_28px_rgba(0,0,0,0.55)]
-                 select-none overflow-hidden"
+      className="fixed px-3 py-2 rounded-xl
+                 backdrop-blur-sm select-none overflow-hidden"
       style={{
         top: pos.y, 
         left: pos.x,
         width: Math.max(200, Math.min(260 * VIS, 600)),
         opacity: cfg.opacity,
         pointerEvents: dragMode || ctrlMode ? 'auto' : 'none',
-        background: cfg.bgMode === 'static'
+        background: cfg.colorMode === 'static'
           ? cfg.bgColor
-          : `linear-gradient(135deg, ${cfg.bgColor} 0%, rgba(0,0,0,0.85) 100%)`,
+          : `linear-gradient(135deg, ${dominantColor} 0%, rgba(0,0,0,0.85) 100%)`,
+        contain: 'layout style paint',
+        isolation: 'isolate',
+        boxShadow: `
+          0 8px 28px rgba(0,0,0,0.55),
+          inset 0 0 0 1px rgba(255,255,255,0.1)
+        `,
       }}
       onPointerDown={() => ctrlMode && armCtrlTimeout()}
       onPointerMove={() => ctrlMode && armCtrlTimeout()}

@@ -24,8 +24,8 @@ const defaults = {
   pos:         { x: 0, y: 0 },
   opacity:     0.8,
   scale:       1,
-  bgMode:      'static', 
   bgColor:     '#121212',
+  colorMode:   'static', // 'static', 'light-muted', 'muted', 'dark-muted'
   showCurrent: true,
   showBPM:     false,
   showNext:    true,

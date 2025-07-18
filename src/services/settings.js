@@ -13,12 +13,12 @@ const schema = {
   opacity: { type: 'number', default: 0.8 },
   scale: { type: 'number', default: 1 },
 
-  bgMode: { type: 'string', default: 'static' },
-  bgColor: { type: 'string', default: '#000000' },
+  colorMode: { type: 'string', default: 'static' }, // 'static', 'light-muted', 'muted', 'dark-muted'
+  bgColor: { type: 'string', default: '#121212' },
 
   showCurrent: { type: 'boolean', default: true },
   showBPM: { type: 'boolean', default: false },
-  showNext: { type: 'boolean', default: false },
+  showNext: { type: 'boolean', default: true },
   showPlaylist: { type: 'boolean', default: false },
 
   shortcuts: {

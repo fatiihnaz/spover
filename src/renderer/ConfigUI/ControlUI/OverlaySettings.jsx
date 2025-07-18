@@ -105,29 +105,44 @@ export default function OverlaySettings({ cfg, setCfg }) {
           />
         </div>
 
-        {/* Arka Plan Rengi */}
+        {/* Renk Modu */}
         <div className="p-4">
-          <span className="block mb-2 text-white font-medium">Arka Plan Rengi</span>
-          {/* Mod seçimi */}
-          <div className="flex space-x-3 mb-3">
-            {['static', 'reactive'].map(mode => (
-              <button
-                key={mode}
-                onClick={() => setCfg({ ...cfg, bgMode: mode })}
-                className={`
-          px-3 py-1.5 text-sm font-medium rounded-md
-          transition-colors duration-150
-          ${cfg.bgMode === mode
-                    ? 'bg-green-600 text-white'
-                    : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600 hover:text-white'}
-        `}
-              >
-                {mode === 'static' ? 'Statik' : 'Reaktif'}
-              </button>
-            ))}
+          <span className="block mb-3 text-white font-medium">Renk Modu</span>
+          
+          {/* 4 noktalı slider */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex-1 relative">
+              {/* Slider çizgisi */}
+              <div className="absolute top-1/2 transform -translate-y-1/2 w-full h-0.5 bg-zinc-600 rounded"></div>
+              
+              {/* Noktalar */}
+              <div className="flex justify-between relative z-10">
+                {['static', 'light-muted', 'muted', 'dark-muted'].map((mode, index) => (
+                  <button
+                    key={mode}
+                    onClick={() => setCfg({ ...cfg, colorMode: mode })}
+                    className={`
+                      w-4 h-4 rounded-full border-2 transition-all duration-200
+                      ${cfg.colorMode === mode 
+                        ? 'bg-green-500 border-green-500 scale-125' 
+                        : 'bg-zinc-700 border-zinc-500 hover:border-zinc-400'}
+                    `}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
+          
+          {/* Mod etiketleri */}
+          <div className="flex justify-between text-xs text-zinc-400 mb-3">
+            <span>Statik</span>
+            <span>Açık</span>
+            <span>Orta</span>
+            <span>Koyu</span>
+          </div>
+          
           {/* Statik modda renk seçici */}
-          {cfg.bgMode === 'static' && (
+          {cfg.colorMode === 'static' && (
             <div className="flex items-center space-x-4">
               <input
                 type="color"
