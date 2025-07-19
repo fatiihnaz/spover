@@ -24,7 +24,7 @@ export default function App() {
     <div className="h-screen w-screen bg-zinc-900 text-white select-none overflow-hidden">
       <HeaderBar spotifyReady={spotifyReady} />
 
-      <div className="h-[calc(100vh-40px)] flex flex-col md:flex-row overflow-hidden">
+      <div className="h-full flex flex-col md:flex-row overflow-hidden">
         {/* SOL: preview veya builder */}
         <PreviewArea cfg={cfg} activeTab={tab} />
 

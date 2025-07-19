@@ -91,7 +91,7 @@ export default function ScrollArea({ children, className = '' }) {
       <div
         ref={trackRef}
         className="pointer-events-none absolute inset-y-1 right-1 w-1.5 rounded-full 
-                   bg-white/10 opacity-0 transition-opacity duration-300"
+                   bg-white/10 opacity-0 transition-opacity duration-300 my-10"
       >
         <div
           ref={thumbRef}

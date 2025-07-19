@@ -15,8 +15,6 @@ import OverlayNext from './SimpleOverlayUI/OverlayNext';
 import OverlayPlaylist from './SimpleOverlayUI/OverlayPlaylist';
 import OverlayController from './SimpleOverlayUI/OverlayController';
 
-const DRAG_HIDE_DELAY = 10_000; // ms
-
 export default function Overlay() {
   /* settings + drag */
   const [cfg, setCfg] = useConfig();
@@ -65,9 +63,9 @@ export default function Overlay() {
 
   const modes = [
     { id: 'showCurrent', enabled: cfg.showCurrent, Comp: OverlayCurrent, props: { now, bpm, genre, pct, paused, VIS, cover } },
-    { id: 'showBPM', enabled: cfg.showBPM, Comp: OverlayBPM, props: { bpm, VIS } },
     { id: 'showNext', enabled: cfg.showNext, Comp: OverlayNext, props: { ...nextProps, VIS } },
     { id: 'showPlaylist', enabled: cfg.showPlaylist, Comp: OverlayPlaylist, props: { VIS, ...plProps } },
+    { id: 'showBPM', enabled: cfg.showBPM, Comp: OverlayBPM, props: { bpm, VIS } },
   ];
   const { Active, props } = useOverlayModes(modes);
 
@@ -82,12 +80,12 @@ export default function Overlay() {
     switch (currentMode.id) {
       case 'showCurrent':
         return cover; // current track albüm kapağı
-      case 'showBPM':
-        return cover; // BPM modunda da current track'i kullan
       case 'showNext':
         return nextProps.coverNext || cover; // next track varsa onun kapağını, yoksa current
       case 'showPlaylist':
         return plProps.playlistCover || cover; // playlist varsa onun kapağını, yoksa current
+      case 'showBPM':
+        return cover; // BPM modunda da current track'i kullan
       default:
         return cover;
     }

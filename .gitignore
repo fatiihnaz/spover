@@ -1,4 +1,25 @@
+# Environment variables
 .env
-node_modules
-release
-dist
+
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+build/
+release/
+out/
+
+# Electron packaged apps
+*.app
+*.dmg
+*.exe
+*.deb
+*.rpm
+*.AppImage
+*.snap
+*.tar.gz
+*.zip
+
+# Temporary folders
+tmp/

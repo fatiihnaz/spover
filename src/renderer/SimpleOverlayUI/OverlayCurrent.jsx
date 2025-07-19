@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function OverlayCurrent({ now, genre, pct, paused, VIS }) {
-  const FONT_SMALL = Math.max(VIS, 0.7);
+  const FONT_SMALL = VIS;
   const cover = now?.item?.album?.images?.[1] ?? now?.item?.album?.images?.[0];
   
   // Cycle state: true = sanatçı, false = genre
@@ -72,7 +72,10 @@ export default function OverlayCurrent({ now, genre, pct, paused, VIS }) {
         </div>
 
         {/* Progress Bar (yalnızca bu dikey blok kadar geniş) */}
-        <div className="mt-2 w-full h-[4px] rounded-full bg-white/10 overflow-hidden">
+        <div 
+          className="mt-2 w-full rounded-full bg-white/10 overflow-hidden"
+          style={{ height: `${6 * VIS}px` }}
+        >
           <div
             className={`
               h-full rounded-full transition-[width] duration-300

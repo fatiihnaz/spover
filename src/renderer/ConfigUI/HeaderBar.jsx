@@ -77,7 +77,6 @@ export default function HeaderBar({ spotifyReady }) {
         <button
           onClick={() => window.openSettings?.()}
           className="p-1 rounded-sm transition"
-          title="Ayarlar"
         >
           <Settings size={14} strokeWidth={1.25} className="text-zinc-300/30" />
         </button>

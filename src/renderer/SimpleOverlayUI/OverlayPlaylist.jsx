@@ -2,7 +2,7 @@
 import React from 'react';
 
 export default function OverlayPlaylist({ playlistName, playlistOwner, playlistCover, VIS }) {
-  const FONT_SMALL = Math.max(VIS, 0.7);
+  const FONT_SMALL = VIS;
 
   return (
     <div className="flex items-center gap-4 overflow-hidden">
