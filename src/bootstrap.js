@@ -1,4 +1,4 @@
-const { app, ipcMain, shell, BrowserWindow, dialog } = require('electron');
+const { app, ipcMain, shell, BrowserWindow, dialog, globalShortcut } = require('electron');
 const path   = require('path');
 require('dotenv').config();
 
@@ -25,6 +25,47 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 const firstLink = process.argv.find(a => a.startsWith(`${SCHEME}://`));
+
+/* ---------- Güvenlik Sistemi ---------- */
+function setupGlobalSecurity() {
+  // DevTools kısayollarını global olarak engelle
+  globalShortcut.register('F12', () => {
+    // F12 blocked
+  });
+  
+  globalShortcut.register('Ctrl+Shift+I', () => {
+    // Ctrl+Shift+I blocked
+  });
+  
+  globalShortcut.register('Ctrl+Shift+J', () => {
+    // Ctrl+Shift+J blocked
+  });
+  
+  globalShortcut.register('Ctrl+Shift+C', () => {
+    // Ctrl+Shift+C blocked
+  });
+  
+  globalShortcut.register('Ctrl+R', () => {
+    // Ctrl+R blocked
+  });
+  
+  globalShortcut.register('F5', () => {
+    // F5 blocked
+  });
+  
+  globalShortcut.register('Ctrl+Shift+R', () => {
+    // Ctrl+Shift+R blocked
+  });
+  
+  globalShortcut.register('Ctrl+U', () => {
+    // Ctrl+U blocked
+  });
+}
+
+// IPC handler for security enable
+ipcMain.on('security:enable', () => {
+  setupGlobalSecurity();
+});
 
 /* ============================================================= */
 async function bootstrap() {

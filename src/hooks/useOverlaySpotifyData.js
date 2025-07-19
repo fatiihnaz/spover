@@ -1,17 +1,5 @@
-/***** * Öze * Özellikler:
- *  - window.spotify.onNow() → now & volume güncellenir.
- *  - AudioFeatures devre dışı bırakıldı (Spotify API değişiklikleri nedeniyle).
- *  - Sanatçı ID'siyle window.spotify.getArtist() → genre bilgisi alınır.
- *  - window.spotify.getQueue() ile sıradaki şarkılar çekilir.
- *  - Context türü 'playlist' ise window.spotify.getPlaylist() detayları alınır.
- *  - Hata durumlarında ilgili state'ler null veya [] olur.:
- *  - window.spotify.onNow() → now & volume güncellenir.
- *  - AudioFeatures devre dışı bırakıldı (Spotify API değişiklikleri nedeniyle).
- *  - Sanatçı ID'siyle window.spotify.getArtist() → genre bilgisi alınır.
- *  - window.spotify.getQueue() ile sıradaki şarkılar çekilir.
- *  - Context türü 'playlist' ise window.spotify.getPlaylist() detayları alınır.
- *  - Hata durumlarında ilgili state'ler null veya [] olur.******************************************************************************
- * src/hooks/useOverlaySpotifyData.js
+/******************************************************************************************
+ * src/hooks/useSpotifyOverlayData.js
  *
  * Spotify IPC API’sinden gerçek-zamanlı oynatma verilerini ve ilgili meta verileri
  * overlay’e sağlayan merkezi hook.
@@ -29,7 +17,7 @@
  *    now,       // NowPlaying | null
  *    volume,    // 0-100 | null
  *    setVolume, // volume güncelleme işlevi
- *    features,  // AudioFeatures | null (devre dışı)
+ *    features,  // AudioFeatures | null
  *    genre,     // string | null
  *    queue,     // Track[]
  *    playlist,  // Playlist | null
@@ -38,6 +26,7 @@
  * Kullanımı:
  *  const { now, volume, features, genre, queue } = useSpotifyOverlayData();
  ******************************************************************************************/
+
 
 import { useState, useEffect } from 'react';
 

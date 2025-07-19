@@ -16,16 +16,4 @@ html, body, #root {
   -webkit-app-region: no-drag;
 }
 
-/* Volume Slider Thumb Size - sadece thumb boyutunu kontrol eder */
-.volume-slider::-webkit-slider-thumb {
-  height: var(--thumb-size, 12px) !important;
-  width: var(--thumb-size, 12px) !important;
-  -webkit-appearance: none !important;
-  appearance: none !important;
-}
 
-.volume-slider::-moz-range-thumb {
-  height: var(--thumb-size, 12px) !important;
-  width: var(--thumb-size, 12px) !important;
-  border: none !important;
-}

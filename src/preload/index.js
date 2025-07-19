@@ -1,5 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// Güvenlik önlemlerini main process'e bildir
+ipcRenderer.send('security:enable');
+
 contextBridge.exposeInMainWorld('settings', {
   get: () => ipcRenderer.invoke('settings:get'),
   set: (d) => ipcRenderer.send('settings:set', d),

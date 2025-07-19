@@ -13,6 +13,7 @@ function createMainWindow() {
     height: 540,
     frame: false,
     show: false,
+    backgroundColor: '#18181b',
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
