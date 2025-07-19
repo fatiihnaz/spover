@@ -4,7 +4,7 @@ const { mainWin } = require('./windows');
 
 function createTray() {
   const appPath = app.getAppPath();
-  const iconPath = path.join(appPath, 'public', 'icon.png');
+  const iconPath = path.join(appPath, 'public', 'spover.ico');
 
   const tray = new Tray(iconPath);
   const menu = Menu.buildFromTemplate([
