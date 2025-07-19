@@ -1,4 +1,16 @@
-/******************************************************************************************
+/***** * Öze * Özellikler:
+ *  - window.spotify.onNow() → now & volume güncellenir.
+ *  - AudioFeatures devre dışı bırakıldı (Spotify API değişiklikleri nedeniyle).
+ *  - Sanatçı ID'siyle window.spotify.getArtist() → genre bilgisi alınır.
+ *  - window.spotify.getQueue() ile sıradaki şarkılar çekilir.
+ *  - Context türü 'playlist' ise window.spotify.getPlaylist() detayları alınır.
+ *  - Hata durumlarında ilgili state'ler null veya [] olur.:
+ *  - window.spotify.onNow() → now & volume güncellenir.
+ *  - AudioFeatures devre dışı bırakıldı (Spotify API değişiklikleri nedeniyle).
+ *  - Sanatçı ID'siyle window.spotify.getArtist() → genre bilgisi alınır.
+ *  - window.spotify.getQueue() ile sıradaki şarkılar çekilir.
+ *  - Context türü 'playlist' ise window.spotify.getPlaylist() detayları alınır.
+ *  - Hata durumlarında ilgili state'ler null veya [] olur.******************************************************************************
  * src/hooks/useOverlaySpotifyData.js
  *
  * Spotify IPC API’sinden gerçek-zamanlı oynatma verilerini ve ilgili meta verileri
@@ -17,7 +29,7 @@
  *    now,       // NowPlaying | null
  *    volume,    // 0-100 | null
  *    setVolume, // volume güncelleme işlevi
- *    features,  // AudioFeatures | null
+ *    features,  // AudioFeatures | null (devre dışı)
  *    genre,     // string | null
  *    queue,     // Track[]
  *    playlist,  // Playlist | null
@@ -48,13 +60,13 @@ export default function useSpotifyOverlayData() {
     return () => unsub();
   }, []);
 
-  // AudioFeatures
-  useEffect(() => {
+  // AudioFeatures - Bu bölüm spotify API değişikliklerinden ötürü devre dışı bırakıldı.
+  /* useEffect(() => {
     if (!now?.item?.id) return setFeatures(null);
     window.spotify.getAudioFeatures(now.item.id)
       .then(setFeatures)
       .catch(() => setFeatures(null));
-  }, [now?.item?.id]);
+  }, [now?.item?.id]); */
 
   // Artist Genre
   useEffect(() => {

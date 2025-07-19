@@ -14,7 +14,22 @@ function start(port = 4350) {
     res.end(successPage());
   });
 
-  // *** eksik olan satır ***
+  // Socket timeout ve error handling ekle
+  server.timeout = 10000; // 10 saniye timeout
+  server.keepAliveTimeout = 5000; // 5 saniye keep-alive timeout
+  server.headersTimeout = 6000; // 6 saniye headers timeout
+
+  server.on('error', (err) => {
+    console.error('[oauth] server error:', err);
+  });
+
+  server.on('clientError', (err, socket) => {
+    console.warn('[oauth] client error:', err.message);
+    if (socket.writable) {
+      socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+    }
+  });
+
   server.listen(port, '127.0.0.1', () =>
     console.log(`[oauth] callback server listening on ${port}`)
   );

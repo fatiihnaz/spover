@@ -4,18 +4,18 @@ import { TriangleAlert } from 'lucide-react';
 import { motion, LayoutGroup } from 'framer-motion';
 
 const simpleOpts = [
-  { id: 'showCurrent',  label: 'Çalan Şarkı ve Kapak' },
-  { id: 'showBPM',      label: 'BPM Göster' },
-  { id: 'showNext',     label: 'Sıradaki Şarkı' },
-  { id: 'showPlaylist', label: 'Playlist Adı' },
+  { id: 'showCurrent', label: 'Çalan Şarkı ve Kapak', availability: 'y' },
+  { id: 'showNext', label: 'Sıradaki Şarkı', availability: 'y' },
+  { id: 'showPlaylist', label: 'Playlist Adı', availability: 'y' },
+  { id: 'showBPM', label: 'BPM Göster', availability: 'n' },
 ];
 
 export default function ModeSettings({ cfg, setCfg }) {
   const [tab, setTab] = useState('simple');
   const [showModularWarning, setShowModularWarning] = useState(false);
-  
+
   const tabs = [
-    { id: 'simple',  label: 'Simple' },
+    { id: 'simple', label: 'Simple' },
     { id: 'modular', label: 'Modular' },
   ];
   const opts = tab === 'simple' ? simpleOpts : [];
@@ -46,11 +46,10 @@ export default function ModeSettings({ cfg, setCfg }) {
               <div key={t.id} className="relative">
                 <button
                   onClick={() => handleTabChange(t.id)}
-                  className={`pb-2 text-sm font-semibold tracking-wide uppercase transition-colors ${
-                    isActive
+                  className={`pb-2 text-sm font-semibold tracking-wide uppercase transition-colors ${isActive
                       ? 'text-green-400'
                       : 'text-zinc-500 hover:text-zinc-300'
-                  }`}
+                    }`}
                 >
                   {t.label}
                 </button>
@@ -84,7 +83,9 @@ export default function ModeSettings({ cfg, setCfg }) {
         {opts.map(o => (
           <div
             key={o.id}
-            className="flex items-center justify-between py-3 hover:bg-zinc-700/20"
+            className={`flex items-center justify-between py-3 hover:bg-zinc-700/20 ${
+              o.availability === 'n' ? 'opacity-40 relative' : ''
+            }`}
           >
             <span className="text-white font-medium">{o.label}</span>
             <label className="relative inline-flex items-center cursor-pointer">
@@ -92,6 +93,7 @@ export default function ModeSettings({ cfg, setCfg }) {
                 type="checkbox"
                 className="sr-only peer"
                 checked={!!cfg[o.id]}
+                disabled={o.availability === 'n'}
                 onChange={e => setCfg({ ...cfg, [o.id]: e.target.checked })}
               />
               <div className="
@@ -109,6 +111,11 @@ export default function ModeSettings({ cfg, setCfg }) {
                 transition-transform duration-200
               " />
             </label>
+            {o.availability === 'n' && (
+              <div className="absolute inset-0 flex items-center justify-center bg-zinc-800/80">
+                <span className="text-zinc-300 text-sm font-medium">Mevcut değil</span>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -23,54 +23,54 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
   
   const changeV = useCallback(e => onAction("vol", +e.target.value), [onAction]);
 
-  /* Variants ------------------------------------------------------------ */
-  const borderVariant = {
-    closed: i => ({
-      scaleX: 0,
-      transition: { duration: 0.2, delay: 0.25 }, // wait on exit
-    }),
-    open: i => ({
-      scaleX: 1,
-      transition: { duration: 0.25, delay: i * 0.0 },
-    }),
+  // Container variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
   };
 
-  const barVariant = {
-    closed: { opacity: 0, y: -GAP_Y, transition: { duration: 0.2 } },
-    open: { opacity: 1, y: 0, transition: { duration: 0.25, delay: 0.25 } },
+  // Border variants
+  const borderVariants = {
+    hidden: { scaleX: 0 },
+    visible: { scaleX: 1, transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] } },
+  };
+
+  // Bar variants
+  const barVariants = {
+    hidden: { opacity: 0, y: -GAP_Y },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] } },
   };
 
   /* -------------------------------------------------------------------- */
   return (
     <motion.div
-      initial="closed"
-      animate="open"
-      exit="closed"
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      variants={containerVariants}
       className="flex flex-col w-full items-center mt-2 pointer-events-auto select-none"
       style={{ maxWidth: SLIDER_W + BTN * 4 + 32 }}
     >
       {/* top splitting border */}
-      <div className="relative w-full h-0.25 overflow-visible">
+      <div className="relative w-full h-0.5 overflow-visible mb-1">
         {/* left wing */}
         <motion.div
-          className="absolute right-1/2 top-0 h-full bg-white/10"
-          style={{ width: "60%", transformOrigin: "right" }}
-          variants={borderVariant}
-          custom={0}
+          className="absolute right-1/2 top-0 h-full bg-white/15"
+          style={{ width: "50%", transformOrigin: "right" }}
+          variants={borderVariants}
         />
         {/* right wing */}
         <motion.div
-          className="absolute left-1/2 top-0 h-full bg-white/10"
-          style={{ width: "60%", transformOrigin: "left" }}
-          variants={borderVariant}
-          custom={0}
+          className="absolute left-1/2 top-0 h-full bg-white/15"
+          style={{ width: "50%", transformOrigin: "left" }}
+          variants={borderVariants}
         />
       </div>
 
       {/* control bar */}
       <motion.div
         className="flex items-center gap-1 pt-1"
-        variants={barVariant}
+        variants={barVariants}
       >
         <IconBtn 
           size={BTN} 

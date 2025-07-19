@@ -49,13 +49,29 @@ async function exchangeToken(code) {
     client_id: CLIENT_ID,
   });
 
-  const r = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
-  });
-  if (!r.ok) throw new Error(`token ${r.status} – ${await r.text()}`);
-  return r.json();
+  // Timeout kontrolü ile fetch
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+
+  try {
+    const r = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!r.ok) throw new Error(`token ${r.status} – ${await r.text()}`);
+    return r.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Token exchange timeout');
+    }
+    throw err;
+  }
 }
 
 /* 3) deep-link handler --------------------------------------*/
@@ -78,8 +94,20 @@ async function handleOAuthCallback(url) {
     require('../services/spotify').setup(tokens);
     BrowserWindow.getAllWindows()[0]
       ?.webContents.send('spotify:connected');
+      
+    console.log('[oauth] Successfully connected to Spotify');
   } catch (err) {
-    console.error('[oauth]', err);
+    console.error('[oauth] Callback error:', err.message);
+    
+    // Farklı hata türlerine göre daha detaylı logging
+    if (err.message === 'STATE_MISMATCH') {
+      console.error('[oauth] State mismatch - possible CSRF attack or expired request');
+    } else if (err.message === 'Token exchange timeout') {
+      console.error('[oauth] Token exchange timed out - network issues');
+    } else if (err.name === 'AbortError') {
+      console.error('[oauth] Request was aborted');
+    }
+    
     BrowserWindow.getAllWindows()[0]
       ?.webContents.send('oauth:error', err.message);
   }

@@ -20,7 +20,9 @@ async function ensureToken() {
 
 
 /* ───── EK API YARDIMCILARI ───── */
-async function getAudioFeatures(id) {
+// AudioFeatures - Spotify API değişikliklerinden ötürü devre dışı bırakıldı.
+// https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api
+/* async function getAudioFeatures(id) {
   await ensureToken();
   try {
     const r = await client.getAudioFeaturesForTrack(id);
@@ -30,7 +32,7 @@ async function getAudioFeatures(id) {
       { id, status: err?.statusCode, message: err?.message });
     return null;                           // renderer “— BPM” gösterir
   }
-}
+} */
 
 async function getArtist(id) {
   await ensureToken();
@@ -206,7 +208,7 @@ async function setup(tokens = credentials.get()) {
     return requestImmediateUpdate();
   });
 
-  register('spotify:audioFeatures', (_e, id) => getAudioFeatures(id));
+  // register('spotify:audioFeatures', (_e, id) => getAudioFeatures(id));
   register('spotify:artist', (_e, id) => getArtist(id));
   register('spotify:queue', () => getQueue());
   register('spotify:playlist', (_e, id) => getPlaylist(id));
@@ -220,9 +222,6 @@ module.exports = {
   onDisconnected: cb => emitter.on('spotify:disconnected', cb),
   onNow: cb => emitter.on('spotify:now', cb),
   requestImmediateUpdate,
-
-  /* yeni public API */
-  getAudioFeatures,
   getArtist,
   getQueue,
   getPlaylist,

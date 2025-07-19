@@ -41,7 +41,9 @@ export default function Overlay() {
   const VIS = Math.min(cfg.scale, 1.6);
   const pct = now?.item ? (now.progress_ms / now.item.duration_ms) * 100 : 0;
   const paused = now && !now.is_playing;
-  const bpm = features?.tempo ? Math.round(features.tempo) : null;
+  // BPM - AudioFeatures devre dışı bırakıldığı için artık kullanılamıyor
+  // const bpm = features?.tempo ? Math.round(features.tempo) : null;
+  const bpm = null; // AudioFeatures Spotify API değişiklikleri nedeniyle devre dışı
 
   const next = queue[0];
   const nextProps = next
@@ -150,41 +152,64 @@ export default function Overlay() {
       )}
 
       {/* ----------- Spotify kontrol paneli (ctrlMode ON) ------------ */}
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence initial={false}>
         {ctrlMode && (
-          <OverlayController
-            VIS={VIS}
-            volume={volume ?? 0}
-            isPlaying={!paused}
-            onAction={async (action, payload) => {
-              armCtrlTimeout();
-              const s = window.spotify;
-              
-              // Optimistik güncellemeler
-              switch (action) {
-                case 'prev':
-                  await s?.prev?.();
-                  // Hemen yeni track verilerini çek
-                  window.spotify?.requestImmediateUpdate?.();
-                  break;
-                case 'play':
-                  await s?.togglePlay?.();
-                  // Play state'i hemen güncelle (optimistic)
-                  // window.spotify?.requestImmediateUpdate?.();
-                  break;
-                case 'next':
-                  await s?.next?.();
-                  // Hemen yeni track verilerini çek
-                  window.spotify?.requestImmediateUpdate?.();
-                  break;
-                case 'vol':
-                  setVolume(payload); // Hemen UI'da göster
-                  await s?.setVolume?.(payload);
-                  break;
-                default:
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              height: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+              opacity: { 
+                duration: 0.25, 
+                ease: "easeOut",
+                delay: ctrlMode ? 0.1 : 0 
               }
             }}
-          />
+          >
+            <div style={{ overflow: "hidden" }}>
+              <OverlayController
+                VIS={VIS}
+                volume={volume ?? 0}
+                isPlaying={!paused}
+                onAction={async (action, payload) => {
+                  armCtrlTimeout();
+                  const s = window.spotify;
+                  
+                  // Optimistik güncellemeler
+                  switch (action) {
+                    case 'prev':
+                      await s?.prev?.();
+                      // Debounce ile immediate update - çok sık çağrılmasını engelle
+                      setTimeout(() => {
+                        window.spotify?.requestImmediateUpdate?.();
+                      }, 200);
+                      break;
+                    case 'play':
+                      await s?.togglePlay?.();
+                      // Play/pause için daha kısa gecikme
+                      setTimeout(() => {
+                        window.spotify?.requestImmediateUpdate?.();
+                      }, 100);
+                      break;
+                    case 'next':
+                      await s?.next?.();
+                      // Debounce ile immediate update - çok sık çağrılmasını engelle
+                      setTimeout(() => {
+                        window.spotify?.requestImmediateUpdate?.();
+                      }, 200);
+                      break;
+                    case 'vol':
+                      setVolume(payload); // Hemen UI'da göster
+                      await s?.setVolume?.(payload);
+                      // Volume için immediate update gereksiz
+                      break;
+                    default:
+                  }
+                }}
+              />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
