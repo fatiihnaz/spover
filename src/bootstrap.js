@@ -1,10 +1,12 @@
 const { app, ipcMain, shell, BrowserWindow, dialog, globalShortcut } = require('electron');
-const path   = require('path');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({
+  path: path.join(app.getAppPath(), '.env')
+});
 
 /* ---------- Sabitler ---------- */
-const SCHEME = 'spover'; 
-const PORT   = Number(process.env.OAUTH_PORT) 
+const SCHEME = 'spover';
+const PORT = Number(process.env.OAUTH_PORT)
 const REDIRECT_URI = `http://127.0.0.1:${PORT}/callback`;
 const IS_DEV = !app.isPackaged;
 
@@ -32,31 +34,31 @@ function setupGlobalSecurity() {
   globalShortcut.register('F12', () => {
     // F12 blocked
   });
-  
+
   globalShortcut.register('Ctrl+Shift+I', () => {
     // Ctrl+Shift+I blocked
   });
-  
+
   globalShortcut.register('Ctrl+Shift+J', () => {
     // Ctrl+Shift+J blocked
   });
-  
+
   globalShortcut.register('Ctrl+Shift+C', () => {
     // Ctrl+Shift+C blocked
   });
-  
+
   globalShortcut.register('Ctrl+R', () => {
     // Ctrl+R blocked
   });
-  
+
   globalShortcut.register('F5', () => {
     // F5 blocked
   });
-  
+
   globalShortcut.register('Ctrl+Shift+R', () => {
     // Ctrl+Shift+R blocked
   });
-  
+
   globalShortcut.register('Ctrl+U', () => {
     // Ctrl+U blocked
   });

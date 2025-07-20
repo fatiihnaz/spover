@@ -8,12 +8,12 @@
  *    true/false’a çevrilir.
  *  - Kontrol moduna girildiğinde rootRef’in boundingRect’i alınarak
  *    window.overlayControl.setControlRegion() ile ana-işleme (main-process) bildirilir.
- *  - CTRL_HIDE_DELAY (10 sn) sonunda pasif kalırsa mod otomatik kapanır.
+ *  - CTRL_HIDE_DELAY (5 sn) sonunda pasif kalırsa mod otomatik kapanır.
  *  - armCtrlTimeout() ile bu geri-sayım manuel olarak sıfırlanabilir (örn. hover, klik vs.).
  *
  * Döndürdüğü değerler:
  *  - ctrlMode:       boolean   // Kontrol modunun açık/kapalı durumu
- *  - armCtrlTimeout: () → void // 10 sn’lik zamanlayıcıyı yeniden başlat
+ *  - armCtrlTimeout: () → void // 5 sn’lik zamanlayıcıyı yeniden başlat
  *
  * Kullanımı:
  *  const { ctrlMode, armCtrlTimeout } = useOverlayControl(rootRef);
@@ -21,7 +21,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-const CTRL_HIDE_DELAY = 10_000; // ms
+const CTRL_HIDE_DELAY = 5_000; // ms
 
 export default function useOverlayControl(rootRef) {
   const [ctrlMode, setCtrlMode] = useState(false);

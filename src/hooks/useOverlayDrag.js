@@ -11,7 +11,7 @@
  *  - window.overlayControl.onEnterDrag() tetiklenince dragMode true olur.
  *  - rootRef’te pointerdown/move/up ile sürükleme yapılır; pos state’i anlık güncellenir.
  *  - Bırakıldığında updatePos() çağrılır ve dragMode kapanır.
- *  - DRAG_HIDE_DELAY (10 sn) hareketsizlikte dragMode otomatik kapanır.
+ *  - DRAG_HIDE_DELAY (5 sn) hareketsizlikte dragMode otomatik kapanır.
  *  - Konum, pencere sınırları dışına taşmayacak şekilde sınırlandırılır.
  *
  * Döndürdüğü değerler:
@@ -26,7 +26,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-const DRAG_HIDE_DELAY = 10_000;
+const DRAG_HIDE_DELAY = 5_000;
 
 export default function useDragOverlay(cfgPos, updatePos) {
   const [pos, setPos] = useState(cfgPos);

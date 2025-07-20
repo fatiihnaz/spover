@@ -1,24 +1,29 @@
 {
   "name": "spoover",
   "productName": "Spover",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "type": "commonjs",
-  "main": "dist/main.js",
+  "main": "build/main.js",
   "scripts": {
     "build-main": "node ./src/build-main.js",
-    "build": "npm run build-main && vite build",
+    "build": "vite build && npm run build-main",
     "start": "npm run build && electron .",
     "dev": "concurrently \"npm run build-main -- --watch\" \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "package-win": "npm run build && electron-packager . Spover --platform=win32 --arch=x64 --out=release --overwrite"
+    "package-win": "npm run build && electron-packager . Spover --platform=win32 --arch=x64 --out=release --overwrite",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:all": "npm run build && electron-builder --win --mac"
   },
   "keywords": [],
-  "author": "",
+  "author": "fatiihnaz",
   "license": "ISC",
-  "description": "",
+  "description": "Spotify overlay application for desktop",
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.0",
     "concurrently": "^9.1.2",
     "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
     "electron-packager": "^17.1.2",
     "esbuild": "^0.25.4",
     "wait-on": "^8.0.3"
@@ -40,11 +45,16 @@
   "build": {
     "appId": "com.fatih.spover",
     "productName": "Spover",
+    "directories": {
+      "output": "build"
+    },
     "files": [
-      "dist/**/*",
-      "src/**/*",
-      "public/**/*",
-      "package.json"
+      "build/**/*",
+      "src/preload/**/*",
+      "package.json",
+      ".env",
+      "public/spover.ico",
+      "!node_modules/@tailwindcss/**/*"
     ],
     "protocols": [
       {
@@ -56,9 +66,50 @@
     ],
     "win": {
       "target": [
-        "nsis",
-        "zip"
-      ]
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/spover.ico"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "public/spover.icns",
+      "category": "public.app-category.music"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "dmg": {
+      "title": "Spover Installer",
+      "icon": "public/spover.icns"
     }
   }
 }

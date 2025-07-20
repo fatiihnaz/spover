@@ -6,5 +6,5 @@ require('esbuild').build({
   format: 'cjs',          // CommonJS çıkışı
   external: ['electron'], // 'electron' modülünü paket dışı bırak
   sourcemap: true,        // isteğe bağlı: hata ayıklama haritaları
-  outfile: 'dist/main.js',
+  outfile: 'build/main.js',
 }).catch(() => process.exit(1));

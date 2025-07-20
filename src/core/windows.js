@@ -26,7 +26,7 @@ function createMainWindow() {
   if (isDev) {
     mainWin.loadURL('http://localhost:5173');
   } else {
-    mainWin.loadFile(path.join(appPath, 'dist', 'index.html'));
+    mainWin.loadFile(path.join(appPath, 'build', 'index.html'));
   }
 
   mainWin.once('ready-to-show', () => mainWin.show());
@@ -58,14 +58,13 @@ function createOverlay() {
       preload: path.join(appPath, 'src', 'preload', 'index.js'),
     },
   });
-
-  // overlayWin.webContents.openDevTools({ mode: 'undocked' });
+  
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
 
   if (isDev) {
     overlayWin.loadURL('http://localhost:5173/#/overlay');
   } else {
-    const indexPath = path.join(appPath, 'dist', 'index.html');
+    const indexPath = path.join(appPath, 'build', 'index.html');
     const overlayUrl = url.format({
       pathname: indexPath,
       protocol: 'file:',
