@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./spover_logo.png" alt="Spover logo" height="160">
+  <img src="./public/spover_logo.png" alt="Spover logo" height="160">
 </p>
 
 # Spover - https://spover.fatiihnaz.com 
