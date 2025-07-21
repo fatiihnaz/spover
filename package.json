@@ -1,7 +1,7 @@
 {
   "name": "spoover",
   "productName": "Spover",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "type": "commonjs",
   "main": "build/main.js",
   "scripts": {

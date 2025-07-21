@@ -48,6 +48,54 @@ export default function OverlaySettings({ cfg, setCfg }) {
       Math.abs(cfg.pos.y - a.y) < 1;
   };
 
+  // Boyut değiştiğinde pozisyonu güncelle
+  const updatePositionForScale = (newScale) => {
+    if (!cfg?.pos) {
+      setCfg({ ...cfg, scale: newScale });
+      return;
+    }
+
+    // Mevcut pozisyona en yakın anchor'u bul
+    let closestAnchor = 'center';
+    let minDistance = Infinity;
+    
+    Object.keys(anchors).forEach(anchorId => {
+      const anchor = anchors[anchorId];
+      const distance = Math.sqrt(
+        Math.pow(cfg.pos.x - anchor.x, 2) + 
+        Math.pow(cfg.pos.y - anchor.y, 2)
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestAnchor = anchorId;
+      }
+    });
+
+    // Yeni scale için yeni anchor pozisyonlarını hesapla
+    const newVIS = Math.min(newScale, 1.6);
+    const newBoxW = Math.max(200, Math.min(260 * newVIS, 600));
+    const newBoxH = newBoxW / 2;
+
+    const newAnchors = {
+      'top-left': { x: marginPct * SW, y: marginPct * SH, },
+      'top-center': { x: SW / 2 - newBoxW / 2, y: marginPct * SH, },
+      'top-right': { x: SW - marginPct * SW - newBoxW, y: marginPct * SH, },
+      'center-left': { x: marginPct * SW, y: SH / 2 - newBoxH / 2 },
+      'center': { x: SW / 2 - newBoxW / 2, y: SH / 2 - newBoxH / 2 },
+      'center-right': { x: SW - marginPct * SW - newBoxW, y: SH / 2 - newBoxH / 2 },
+      'bottom-left': { x: marginPct * SW, y: SH - marginPct * SH - newBoxH, },
+      'bottom-center': { x: SW / 2 - newBoxW / 2, y: SH - marginPct * SH - newBoxH, },
+      'bottom-right': { x: SW - marginPct * SW - newBoxW, y: SH - marginPct * SH - newBoxH, },
+    };
+
+    // Yeni pozisyon ile config'i güncelle
+    setCfg({ 
+      ...cfg, 
+      scale: newScale, 
+      pos: newAnchors[closestAnchor] 
+    });
+  };
+
   return (
     <>
       <h2 className="text-lg font-semibold mb-2">Overlay</h2>
@@ -100,9 +148,7 @@ export default function OverlaySettings({ cfg, setCfg }) {
             step="0.1"
             className="w-full accent-green-600"
             value={cfg.scale}
-            onChange={e =>
-              setCfg({ ...cfg, scale: parseFloat(e.target.value) })
-            }
+            onChange={e => updatePositionForScale(parseFloat(e.target.value))}
           />
         </div>
 

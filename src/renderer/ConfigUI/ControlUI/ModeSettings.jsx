@@ -8,6 +8,7 @@ const simpleOpts = [
   { id: 'showNext', label: 'Sıradaki Şarkı', availability: 'y' },
   { id: 'showPlaylist', label: 'Playlist Adı', availability: 'y' },
   { id: 'showBPM', label: 'BPM Göster', availability: 'n' },
+  { id: 'showRecommended', label: 'Önerilen Şarkı', availability: 'n' },
 ];
 
 export default function ModeSettings({ cfg, setCfg }) {

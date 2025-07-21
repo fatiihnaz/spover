@@ -162,7 +162,7 @@ async function setup(tokens = credentials.get()) {
     } catch (err) {
       console.error('Spotify poll error', err);
     }
-  }, 1500); // 2000ms'den 1500ms'ye düşürdük
+  }, 1000); // 1500ms'den 1000ms'ye düşürdük
 
   connected = true;
   mainWin()?.webContents.send('spotify:connected');

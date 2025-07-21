@@ -14,11 +14,11 @@ export default function OverlayController({ onAction, isPlaying, volume = 75, VI
   const THUMB = clamp(3, 4 * VIS, 6); // Minimal thumb boyutu
   const GAP_Y = 6 * VIS;
 
-  const click = useCallback(type => async () => {
+  const click = useCallback(type => () => {
     setActiveBtn(type); // Butonu aktif göster
-    await onAction(type);
-    // Kısa bir süre sonra aktif durumu kaldır
-    setTimeout(() => setActiveBtn(null), 200);
+    onAction(type); // await kaldırıldı - anında çalışır
+    // Çok daha kısa süre sonra aktif durumu kaldır
+    setTimeout(() => setActiveBtn(null), 50);
   }, [onAction]);
   
   const changeV = useCallback(e => onAction("vol", +e.target.value), [onAction]);
@@ -125,11 +125,10 @@ function IconBtn({ icon: Icon, label, onClick, accent = false, active = false, s
       whileTap={{ scale: 0.95 }}
       animate={{ 
         scale: active ? 0.95 : 1,
-        backgroundColor: active ? 'rgba(255,255,255,0.15)' : 'transparent'
       }}
       transition={{ duration: 0.1 }}
       className={`grid place-items-center rounded-md transition-colors
-                  hover:bg-white/10 ${accent ? "text-emerald-500 shadow-md" : "text-white/80"}`}>
+                  hover:bg-white/15 ${accent ? "text-emerald-500 shadow-md" : "text-white/80"}`}>
       <Icon style={{ width: iconSize, height: iconSize }} />
     </motion.button>
   );
