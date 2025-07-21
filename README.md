@@ -2,13 +2,20 @@
   <img src="./public/spover_logo.png" alt="Spover logo" height="160">
 </p>
 
-<p align="center">
-  *A modern, hack-free Spotify® overlay for Windows & macOS, built with Electron and React 19.*
+<div align="center">
+  <em>A modern, hack-free Spotify® overlay for Windows & macOS, built with Electron and React 19.</em>
+  <br/><br/>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey" alt="License: CC BY-NC 4.0"/>
+  </a>
+  <a href="https://github.com/fatiihnaz/spover/releases">
+    <img src="https://img.shields.io/github/v/release/fatiihnaz/spover?sort=semver" alt="Release"/>
+  </a>
+  <a href="https://spover.fatiihnaz.com">
+    <img src="https://img.shields.io/badge/Website-Visit%20Spover-green" alt="Website"/>
+  </a>
+</div>
 
-  [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)](LICENSE)
-  [![Release](https://img.shields.io/github/v/release/fatiihnaz/spover?sort=semver)](https://github.com/fatiihnaz/spover/releases)
-  [![Website](https://img.shields.io/badge/Website-Visit%20Spover-green)](https://spover.fatiihnaz.com) 
-</p>
 ---
 
 ## Features
