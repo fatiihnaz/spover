@@ -57,22 +57,50 @@ SPOTIFY_REDIRECT_URI=http://localhost:xxxx/callback   # must match your dashboar
 ## Project structure
 
 ~~~text
-spover
-├─ public/                # static assets (icon, index.html, fonts…)
-│  └─ spover.ico|icns
-├─ src/
-│  ├─ main/               # Electron main-process entry & helpers
-│  │   └─ build-main.js
-│  ├─ preload/            # context-isolated bridges exposed as window.xxx
-│  ├─ renderer/           # React 19 code (components, hooks, pages)
-│  │   ├─ hooks/          # useConfig, useShortcutCapture, …
-│  │   ├─ components/     # Overlay, Controller, Modals, etc.
-│  │   └─ styles/         # Tailwind directives + custom utilities
-│  └─ types/              # Optional TS/JS doc typings
-├─ vite.config.mjs        # React + Tailwind + electron renderer build
-├─ package.json           # scripts & dependencies
-├─ LICENSE                # CC BY-NC 4.0
-└─ README.md
+spover/
+├── public/                   # Static assets (icons, images, etc.)
+│   ├── spover.ico | .icns
+│
+├── src/                      # Application source code
+│   ├── bootstrap.js          # Electron main‑process bootstrap (bundled to build/main.js)
+│   ├── build‑main.js         # Esbuild script for bundling bootstrap.js
+│   │
+│   ├── core/                 # Electron core modules
+│   │   ├── authServer.js     # OAuth callback server
+│   │   ├── protocol.js       # PKCE + OAuth URL construction & handling
+│   │   ├── windows.js        # BrowserWindow and overlay setup
+│   │   └── tray.js           # System tray icon & menu
+│   │
+│   ├── preload/              # Preload scripts for renderer security
+│   │   └── index.js          # Exposes IPC APIs to the renderer
+│   │
+│   ├── services/             # Business‑logic services
+│   │   ├── settings.js       # Persistent settings (electron‑store)
+│   │   ├── credentials.js    # Secure token storage
+│   │   ├── shortcuts.js      # Shortcut saving
+│   │   └── spotify.js        # Spotify Web API integration & polling
+│   │
+│   ├── hooks/                # Reusable React/Electron hooks  
+│   │   ├── useConfig.js              # Read/write app configuration  
+│   │   ├── useOverlayControl.js      # Control overlay visibility/modes  
+│   │   ├── useOverlayDrag.js         # Handle drag events on overlay  
+│   │   ├── useOverlayModes.js        # Manage multiple overlay modes  
+│   │   ├── useOverlayMouseTracking.js# Track mouse movements over overlay  
+│   │   ├── useOverlayReactiveColor.js# Dynamically update overlay colors  
+│   │   ├── useOverlaySpotifyData.js  # Fetch & expose Spotify playback data  
+│   │   └── useShortcutCapture.js     # Listen for global keyboard shortcuts  
+│   │
+│   ├── renderer/              # Front‑end (React + Tailwind)
+│   │
+│   └── utils/
+│       └── shortcutGuard.js  # Security handling for shortcut registiration 
+│
+├── index.html                # Vite entry point for renderer
+├── package.json              # Project metadata, scripts & dependencies
+├── package-lock.json         # Exact dependency versions
+├── vite.config.mjs           # Vite configuration (React + Tailwind)
+├── .gitignore                # Ignored files & directories
+└── LICENSE                   # CC BY‑NC 4.0 license text
 ~~~
 
 ---
