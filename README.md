@@ -55,8 +55,7 @@ Create a `.env` in the project root (never commit it) and provide **Spotify** cr
 
 ~~~dotenv
 SPOTIFY_CLIENT_ID=your_id
-SPOTIFY_CLIENT_SECRET=your_secret
-SPOTIFY_REDIRECT_URI=http://localhost:xxxx/callback   # must match your dashboard
+OAUTH_PORT=port # must be an unused port
 ~~~
 
 ---
